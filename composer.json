@@ -1,0 +1,13 @@
+{
+    "name": "anthonybudd/WP_Ajax",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Anthony Budd",
+            "email": "anthonybudd94@gmail.com"
+        }
+    ],
+    "autoload": {
+        "files": ["src/WP_Ajax.php"]
+    } 
+}
