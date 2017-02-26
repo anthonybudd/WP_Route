@@ -10,31 +10,36 @@
  */
 Abstract Class WP_AJAX
 {	
-	public $action;
+	protected $action;
 	public $request;
 	public $user;
 
 	
-	abstract public function run();
+	abstract protected function run();
 
 	public function __construct()
 	{ 	
+		global $wp;
+		$this->wp = $wp;
+
 		if($this->isLoggedIn()){
-			$this->user = 'GET CUR USER';
+			$this->user = wp_get_current_user();
 		}
 	}
 
 	public function boot()
 	{ 	
-		$class = get_called_class();
+		$class = Self::getClassName();
 		$action = new $class;
 		$action->run();
+		die();
 	}
 
 	public static function listen(){
-		$action = Self::getActionName();
-		add_action("wp_ajax_nopriv_{$action}", [Self::getClassName(), 'boot']);
-		add_action("wp_ajax_post_{$action}", [Self::getClassName(), 'boot']);
+		$actionName = Self::getActionName();
+		$className = Self::getClassName();
+		add_action("wp_ajax_{$actionName}", [$className, 'boot']);
+		add_action("wp_ajax_nopriv_{$actionName}", [$className, 'boot']);
 	}
 
 
@@ -51,9 +56,11 @@ Abstract Class WP_AJAX
 		$class = Self::getClassName();
 		$reflection = new ReflectionClass($class);
 		$action = $reflection->newInstanceWithoutConstructor();
-		if(isset($action->action)){
-			return $action->action;
+		if(!isset($action->action)){
+			throw new Exception("Public property \$action not provied");
 		}
+
+		return $action->action;
 	}
 
 
@@ -61,7 +68,18 @@ Abstract Class WP_AJAX
 	// Helpers
 	// -----------------------------------------------------
 	public function isLoggedIn(){
-
+		return is_user_logged_in();
 	}
 
+	public function is($requestType){
+		if(is_array($requestType)){
+			return in_array($_SERVER['REQUEST_METHOD'], array_map('strtoupper', $requestType));
+		}else{
+			return ($_SERVER['REQUEST_METHOD'] === strtoupper($requestType));
+		}
+	}
+
+	public function requestType(){
+		return $_SERVER['REQUEST_METHOD'];
+	}
 }
