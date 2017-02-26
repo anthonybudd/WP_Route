@@ -65,6 +65,13 @@ Abstract Class WP_AJAX
 		return $action->action;
 	}
 
+	// -----------------------------------------------------
+	// JSONResponse
+	// -----------------------------------------------------
+	public function JSONResponse($data){
+		header('Content-Type: application/json');
+		echo json_encode($data);
+	}
 
 	// -----------------------------------------------------
 	// Helpers
@@ -98,10 +105,5 @@ Abstract Class WP_AJAX
 
 	public function requestType(){
 		return $_SERVER['REQUEST_METHOD'];
-	}
-
-	public function JSONResponse($data){
-		header('Content-Type: application/json');
-		echo json_encode($data);
 	}
 }

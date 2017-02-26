@@ -36,7 +36,7 @@ Introduction: [Medium Post](https://medium.com/@AnthonyBudd/wp-model-6887e1a24d3
 
 ### Installation
 
-Require WP_Model with composer
+Require WP_AJAX with composer
 
 ```
 $ composer require anthonybudd/WP_AJAX
@@ -79,26 +79,38 @@ Optionally, you can also provide this method with an array of arguments, this ar
 ExampleAJAX::listen();
 ```
 
+### JSON Response
+
+```php
+Class ExampleAJAX extends WP_AJAX{
+    ..
+
+    protected function run(){
+        $post5 = get_post(5);
+
+        $this->JSONResponse($post5);
+    }
+}
+
+```
+
 ***
 
 ### Helper Methods
 
 ```php
-Product::single(); // Returns the current model if on a single page or in the loop
 
-Product::exists(15); // Returns (bool) true or false
+$this->isLoggedIn(); // Returns (bool) if the current visitor is a logged in user.
 
-$product->get($attribute, $default) // Get attribute from the model
+$this->has($key); // Returns (bool) 
 
-$product->set($attribute, $value) // Set attribute of the model
+$this->get($key, $default = NULL); // Returns 
 
-$product->post() // Returns WP_Post object
+$this->is('POST'); // Returns (bool) 
 
-$product->permalink() // Returns post permalink
+$this->is(['POST', 'PUT']); // Returns (bool) 
 
-$product->hasFeaturedImage() // Returns TRUE if a featured image has been set or FALSE if not
-
-$product->featuredImage($defaultURL) // Returns featured image URL
+$this->requestType(); // Returns 'PUT', 'POST', 'GET', 'DELETE' depending on http request type 
 ```
 
 ***
