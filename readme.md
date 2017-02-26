@@ -2,41 +2,50 @@
 
 <p align="center"><img src="https://c1.staticflickr.com/1/415/31850480513_6cf2b5bdde_b.jpg"></p>
 
-### A simple class for creating active record, eloquent-esque models of WordPress Posts.
+### A simple class for creating concise WordPress AJAX actions
 
 ```php
 
-Class Product extends WP_Model
+Class CreatePost extends WP_AJAX
 {
-    public $postType = 'product';
-    public $attributes = [
-        'color',
-        'weight'
-    ];
+    protected $action = 'create_post';
+
+    protected function run(){
+        if($this->isLoggedIn()){
+            $post = [
+                'post_status' => 'publish'
+            ];
+            
+            if( $this->is(['POST', 'put']) ){
+                $post['post_content'] = 'This requiest was either POST or PUT';
+            }else if( $this->is('get') ){
+                $post['post_content'] = 'This requiest was GET';
+            }
+
+            $post['post_title'] = sprintf('This post was created by %s', $this->user->data->user_nicename);
+            
+            wp_insert_post($post);
+
+            $this->JSONResponse($post);
+        }
+    }
 }
 
-Product::register();
+CreatePost::listen();
 
-$book = new Product;
-$book->title = 'WordPress for dummies';
-$book->color = 'Yellow';
-$book->weight = 100;
-$book->save();
+// http://example.com/wp-admin/admin-ajax.php?action=create_post
 
 ```
 
 Introduction: [Medium Post](https://medium.com/@AnthonyBudd/wp-model-6887e1a24d3c)
 
-Advanced Functionality: [Medium Post](https://medium.com/@AnthonyBudd/wp-model-advanced-b44f117617a7)
-
 ***
 
 ### Features
 
-* Intuitive Active Record ORM
-* Event System
-* Custom Finders
-* Useful Helpers
+* Simple to use
+* Automatiocaaly dies when finished
+* Lots of useful helpers
 
 
 ***
@@ -46,15 +55,15 @@ Advanced Functionality: [Medium Post](https://medium.com/@AnthonyBudd/wp-model-a
 Require WP_Model with composer
 
 ```
-$ composer require anthonybudd/WP_Model
+$ composer require anthonybudd/WP_AJAX
 ```
 
 #### Or
 
-Download the WP_Model class and require it at the top of your functions.php file.
+Download the WP_AJAX class and require it at the top of your functions.php file.
 
 ```php
-    require 'src/WP_Model.php';
+    require 'src/WP_AJAX.php';
 ```
 
 ***

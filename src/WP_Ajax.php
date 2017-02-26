@@ -12,6 +12,7 @@ Abstract Class WP_AJAX
 {	
 	protected $action;
 	public $request;
+	public $wp;
 	public $user;
 
 	
@@ -21,6 +22,7 @@ Abstract Class WP_AJAX
 	{ 	
 		global $wp;
 		$this->wp = $wp;
+		$this->request = $_REQUEST;
 
 		if($this->isLoggedIn()){
 			$this->user = wp_get_current_user();
@@ -71,6 +73,21 @@ Abstract Class WP_AJAX
 		return is_user_logged_in();
 	}
 
+	public function has($key){
+		if(isset($this->request[$key])){
+			return TRUE;
+		}
+		return FALSE;
+	}
+
+	public function get($key, $default = NULL){
+		if($this->has($key)){
+			return $this->request[$key];
+		}
+
+		return $default;
+	}
+
 	public function is($requestType){
 		if(is_array($requestType)){
 			return in_array($_SERVER['REQUEST_METHOD'], array_map('strtoupper', $requestType));
@@ -81,5 +98,10 @@ Abstract Class WP_AJAX
 
 	public function requestType(){
 		return $_SERVER['REQUEST_METHOD'];
+	}
+
+	public function JSONResponse($data){
+		header('Content-Type: application/json');
+		echo json_encode($data);
 	}
 }
