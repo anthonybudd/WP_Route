@@ -124,9 +124,9 @@ Class CreatePost extends WP_AJAX
             ];
             
             if( $this->requestType(['POST', 'put']) ){
-                $post['post_content'] = 'This requiest was either POST or PUT';
+                $post['post_content'] = 'This request was either POST or PUT';
             }else if( $this->requestType('get') ){
-                $post['post_content'] = 'This requiest was GET';
+                $post['post_content'] = 'This request was GET';
             }
 
             $post['post_title'] = sprintf('This post was created by %s', $this->user->data->user_nicename);
