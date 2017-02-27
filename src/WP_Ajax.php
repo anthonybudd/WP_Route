@@ -37,12 +37,15 @@ Abstract Class WP_AJAX
 		die();
 	}
 
-	public static function listen()
+	public static function listen($public = TRUE)
 	{
 		$actionName = Self::getActionName();
 		$className = Self::getClassName();
 		add_action("wp_ajax_{$actionName}", [$className, 'boot']);
-		add_action("wp_ajax_nopriv_{$actionName}", [$className, 'boot']);
+		
+		if($public){
+			add_action("wp_ajax_nopriv_{$actionName}", [$className, 'boot']);
+		}
 	}
 
 

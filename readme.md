@@ -73,6 +73,11 @@ Next you have to call the static method listen(). This will create all of the ho
 ExampleAJAX::listen();
 ```
 
+If you would like to only allow signed in users to access your AJAX endpoint add the argument FALSE to the listen method.
+```php
+ExampleAJAX::listen(FALSE);
+```
+
 ***
 
 ### JSON Response
