@@ -21,7 +21,7 @@ ExampleAJAX::listen();
 
 ```
 
-Introduction: [Medium Post](https://medium.com/@AnthonyBudd/wp-model-6887e1a24d3c)
+# Introduction: [Medium Post](https://medium.com/@AnthonyBudd/wp-ajax-97d8f1d83e26#.pzyhw22zd)
 
 ***
 
@@ -58,7 +58,7 @@ You will need to create a new class that extends WP_AJAX. This class must have o
 Class Example extends WP_AJAX
 {
     protected $action = 'example';
-    
+
     protected function run(){
         echo "Success!";
     }
