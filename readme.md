@@ -39,7 +39,7 @@ ExampleAJAX::listen();
 Require WP_AJAX with composer
 
 ```
-$ composer require anthonybudd/WP_AJAX
+$ composer require anthonybudd/wp_ajax
 ```
 
 #### Or
