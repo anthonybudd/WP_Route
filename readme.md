@@ -100,7 +100,7 @@ $this->isLoggedIn(); // Returns TRUE or FALSE if the current visitor is a logged
 
 $this->has($key); // has() will return TRUE or FALSE if an element exists in the $_REQUEST array with a key of $key
 
-$this->get($key, $default = NULL); // The get() method will return the specified HTTP request variable. If the variable does not exist it will return NULL by default. If you would like to set a custom string as the default, provide it as the second argument.
+$this->get($key, [ $default = NULL ]); // The get() method will return the specified HTTP request variable. If the variable does not exist it will return NULL by default. If you would like to set a custom string as the default, provide it as the second argument.
 
 $this->requestType(); // Returns 'PUT', 'POST', 'GET', 'DELETE' depending on HTTP request type
 
