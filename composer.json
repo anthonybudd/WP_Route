@@ -1,5 +1,5 @@
 {
-    "name": "anthonybudd/WP_Ajax",
+    "name": "anthonybudd/WP_AJAX",
     "type": "library",
     "authors": [
         {
@@ -8,6 +8,6 @@
         }
     ],
     "autoload": {
-        "files": ["src/WP_Ajax.php"]
+        "files": ["src/WP_AJAX.php"]
     } 
 }

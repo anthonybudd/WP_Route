@@ -53,31 +53,27 @@ Download the WP_AJAX class and require it at the top of your functions.php file.
 ***
 
 ### Setup
-You will then need to make a class that extends WP_Model. This class will need the public property $postType and $attributes, an array of strings.
-
-If you need to prefix the model's data in your post_meta table add a public property $prefix. This will be added to the post meta so the attribute 'color' will be saved in the database using the meta_key 'wp_model_color'
+You will need to create a new class that extends WP_AJAX. This class must have one protected property called $action and one protected method named run(). $action will be the AJAX action name [See wp_ajax_(action)](https://codex.wordpress.org/Plugin_API/Action_Reference/wp_ajax_(action)).
 ```php
-Class Product extends WP_Model
+Class Example extends WP_AJAX
 {
-    public $postType = 'product';
-
-    public $prefix = 'wp_model_';
-
-    public $attributes = [
-        'color',
-        'weight'
-    ];
+    protected $action = 'example';
+    
+    protected function run(){
+        echo "Success!";
+    }
 }
 ```
 
 ***
 
 ### Listen
-Before you can create a post you will need to register the post type. You can do this by calling the inherited static method register() in your functions.php file.
-Optionally, you can also provide this method with an array of arguments, this array will be sent directly to the second argument of Wordpress's [See wp_ajax_(action)](https://codex.wordpress.org/Plugin_API/Action_Reference/wp_ajax_(action)) function.
+Next you have to call the static method listen(). This will create all of the hooks so WordPress knows to call the run() method when the correct AJAX endpoint is hit. Note: You will need to call the listen() method for each of your AJAX actions.
 ```php
 ExampleAJAX::listen();
 ```
+
+***
 
 ### JSON Response
 
@@ -99,25 +95,23 @@ Class ExampleAJAX extends WP_AJAX{
 ### Helper Methods
 
 ```php
-
 $this->isLoggedIn(); // Returns (bool) if the current visitor is a logged in user.
 
 $this->has($key); // Returns (bool) 
 
 $this->get($key, $default = NULL); // Returns 
 
-$this->is('POST'); // Returns (bool) 
+$this->requestType(); // Returns 'PUT', 'POST', 'GET', 'DELETE' depending on HTTP request type
 
-$this->is(['POST', 'PUT']); // Returns (bool) 
+$this->requestType('POST'); // Returns (bool) 
 
-$this->requestType(); // Returns 'PUT', 'POST', 'GET', 'DELETE' depending on http request type 
+$this->requestType(['POST', 'PUT']); // Returns (bool)  
 ```
 
 ***
 
 ### Example
 ```php
-
 Class CreatePost extends WP_AJAX
 {
     protected $action = 'create_post';
@@ -128,9 +122,9 @@ Class CreatePost extends WP_AJAX
                 'post_status' => 'publish'
             ];
             
-            if( $this->is(['POST', 'put']) ){
+            if( $this->requestType(['POST', 'put']) ){
                 $post['post_content'] = 'This requiest was either POST or PUT';
-            }else if( $this->is('get') ){
+            }else if( $this->requestType('get') ){
                 $post['post_content'] = 'This requiest was GET';
             }
 

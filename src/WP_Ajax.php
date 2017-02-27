@@ -37,7 +37,8 @@ Abstract Class WP_AJAX
 		die();
 	}
 
-	public static function listen(){
+	public static function listen()
+	{
 		$actionName = Self::getActionName();
 		$className = Self::getClassName();
 		add_action("wp_ajax_{$actionName}", [$className, 'boot']);
@@ -68,7 +69,8 @@ Abstract Class WP_AJAX
 	// -----------------------------------------------------
 	// JSONResponse
 	// -----------------------------------------------------
-	public function JSONResponse($data){
+	public function JSONResponse($data)
+	{
 		header('Content-Type: application/json');
 		echo json_encode($data);
 	}
@@ -76,18 +78,43 @@ Abstract Class WP_AJAX
 	// -----------------------------------------------------
 	// Helpers
 	// -----------------------------------------------------
-	public function isLoggedIn(){
+	// 
+	public static function ajaxURL()
+	{
+		?>
+			<script type="text/javascript">
+				ajaxurl = '<?php echo admin_url('/admin-ajax.php'); ?>';
+			</script>
+		<?php
+	}
+
+	public static function WP_HeadAjaxURL()
+	{
+		add_action('wp_head', ['WP_AJAX', 'ajaxURL']);
+	}
+
+	public function isLoggedIn()
+	{
 		return is_user_logged_in();
 	}
 
-	public function has($key){
+	public function has($key)
+	{
 		if(isset($this->request[$key])){
 			return TRUE;
 		}
+
 		return FALSE;
 	}
 
-	public function get($key, $default = NULL){
+	/**
+	 * [get description]
+	 * @param  string $key     [description]
+	 * @param  string $default [description]
+	 * @return strin
+	 */
+	public function get($key, $default = NULL)
+	{
 		if($this->has($key)){
 			return $this->request[$key];
 		}
@@ -95,15 +122,22 @@ Abstract Class WP_AJAX
 		return $default;
 	}
 
-	public function is($requestType){
-		if(is_array($requestType)){
-			return in_array($_SERVER['REQUEST_METHOD'], array_map('strtoupper', $requestType));
-		}else{
+	/**
+	 * @param string|array $type The type of request you want to check. If an array
+	     *   this method will return true if the request matches any type.
+	 * @return [type]              [description]
+	 */
+	public function requestType($requestType = NULL)
+	{
+		if(!is_null($requestType)){
+
+			if(is_array($requestType)){
+				return in_array($_SERVER['REQUEST_METHOD'], array_map('strtoupper', $requestType));
+			}
+
 			return ($_SERVER['REQUEST_METHOD'] === strtoupper($requestType));
 		}
-	}
 
-	public function requestType(){
 		return $_SERVER['REQUEST_METHOD'];
 	}
 }
