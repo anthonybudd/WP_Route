@@ -8,6 +8,6 @@
         }
     ],
     "autoload": {
-        "files": ["src/WP_AJAX.php"]
+        "files": ["src/WP_Ajax.php"]
     } 
 }

@@ -83,7 +83,7 @@ ExampleAJAX::listen(FALSE);
 ### JSON Response
 If you want to respond to an AJAX request with data the JSONResponse() method will automatically set the content type header to ‘application/json’ and JSON encode the data provided to the method.
 
-I am aware that WordPress has a function called [wp_send_json()](https://codex.wordpress.org/Function_Reference/wp_send_json) but, due to the fact that I know how much it annoys WP developers that I have included this method I will not be removing it.
+I am aware that WordPress has a function called [wp_send_json()](https://codex.wordpress.org/Function_Reference/wp_send_json) but, due to the fact that I know how much it annoys WP developers that I have included this method, I will not be removing it.
 
 ```php
 Class ExampleAJAX extends WP_AJAX{
