@@ -80,12 +80,11 @@ Abstract Class WP_AJAX
 	// -----------------------------------------------------
 	// Helpers
 	// -----------------------------------------------------
-	// 
 	public static function ajaxURL()
 	{
 		?>
 			<script type="text/javascript">
-				ajaxurl = '<?php echo admin_url('/admin-ajax.php'); ?>';
+				var ajaxurl = '<?php echo admin_url('/admin-ajax.php'); ?>';
 			</script>
 		<?php
 	}
@@ -93,6 +92,11 @@ Abstract Class WP_AJAX
 	public static function WP_HeadAjaxURL()
 	{
 		add_action('wp_head', ['WP_AJAX', 'ajaxURL']);
+	}
+
+	public static function link()
+	{
+		return sprintf('%s?action=%s', admin_url('/admin-ajax.php'), ((new static() )->action));
 	}
 
 	public function isLoggedIn()
