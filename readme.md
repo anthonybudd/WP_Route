@@ -103,6 +103,8 @@ Class ExampleAJAX extends WP_AJAX{
 ### Helper Methods
 
 ```php
+Example::url() // Returns the url of the ajax endpoint. Example http://ajax.local/wp/wp-admin/admin-ajax.php?action=example
+
 $this->isLoggedIn(); // Returns TRUE or FALSE if the current visitor is a logged in user.
 
 $this->has($key); // has() will return TRUE or FALSE if an element exists in the $_REQUEST array with a key of $key

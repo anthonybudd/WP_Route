@@ -94,7 +94,7 @@ Abstract Class WP_AJAX
 		add_action('wp_head', ['WP_AJAX', 'ajaxURL']);
 	}
 
-	public static function link()
+	public static function url()
 	{
 		return sprintf('%s?action=%s', admin_url('/admin-ajax.php'), ((new static() )->action));
 	}
