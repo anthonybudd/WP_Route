@@ -9,5 +9,5 @@
     ],
     "autoload": {
         "files": ["src/WP_Ajax.php"]
-    } 
+    }
 }
