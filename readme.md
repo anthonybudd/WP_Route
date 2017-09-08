@@ -1,7 +1,5 @@
 # WP_AJAX
 
-<p align="center"><img src="https://c1.staticflickr.com/1/415/31850480513_6cf2b5bdde_b.jpg"></p>
-
 ### A simple class for creating concise WordPress AJAX actions
 
 ```php
