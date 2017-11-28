@@ -94,9 +94,12 @@ Abstract Class WP_AJAX
 		add_action('wp_head', ['WP_AJAX', 'ajaxURL']);
 	}
 
-	public static function url()
-	{
-		return sprintf('%s?action=%s', admin_url('/admin-ajax.php'), ((new static() )->action));
+	public static function url($params = array()){
+		$params = http_build_query(array_merge(array(
+			'action' => (new static())->action,
+		), $params));
+
+		return admin_url('/admin-ajax.php') .'?'. $params;
 	}
 
 	public function isLoggedIn()
@@ -119,12 +122,13 @@ Abstract Class WP_AJAX
 	 * @param  string $default [description]
 	 * @return strin
 	 */
-	public function get($key, $default = NULL)
-	{
+	public function get($key, $default = NULL, $stripslashes = TRUE){
 		if($this->has($key)){
+			if($stripslashes){
+				return stripslashes($this->request[$key]);
+			}
 			return $this->request[$key];
 		}
-
 		return $default;
 	}
 
