@@ -1,152 +1,95 @@
-# WP_AJAX
+# WP_Route
 
-### A simple class for creating concise WordPress AJAX actions
+<p align="center"><img src="https://ideea.co.uk/static/wp_route.png"></p>
 
-```php
+### A simple way to make custom routes in WordPress.
+WP_Route is a simple way to create custom routes in WordPress. WP_Route is a single class solution that does not require any set-up and supports route parameters and redirects.
 
-Class ExampleAJAX extends WP_AJAX
-{
-    protected $action = 'example';
-
-    protected function run(){
-        echo "Sucess!";
-    }
-}
-
-ExampleAJAX::listen();
-
-// http://example.com/wp-admin/admin-ajax.php?action=example
-
-```
-
-# Introduction: [Medium Post](https://medium.com/@AnthonyBudd/wp-ajax-97d8f1d83e26#.pzyhw22zd)
-
-***
-
-### Features
-
-* Simple to use
-* Automatiocaaly dies when finished
-* Lots of useful helpers
-
-
-***
-
-### Installation
-
-Require WP_AJAX with composer
-
-```
-$ composer require anthonybudd/wp_ajax
-```
-
-#### Or
-
-Download the WP_AJAX class and require it at the top of your functions.php file.
+## Introduction: **[Medium Post](https://medium.com/@AnthonyBudd/wp-route-a-simple-way-to-make-custom-routes-in-wordpress-5ab1b3063115)**
 
 ```php
-    require 'src/WP_AJAX.php';
+
+WP_Route::get('flights',                        'listFlights');
+WP_Route::post('flights/{flight}',              'singleFlight');
+WP_Route::put('flights/{flight}/book/{date}',   'bookFlight');
+WP_Route::delete('flights/{flight}/delete',     'deleteFlight');
+
+WP_Route::any('flights/{flight}',   array('Class', 'staticMethod'));
+WP_Route::patch('flights/{flight}', array($object, 'method'));
+WP_Route::match(['get', 'post'],    'flights/{flight}/confirm', 'confirmFlight');
+WP_Route::redirect('from/here',     '/to/here', 301);
+
+
 ```
 
-***
+# Installation
 
-### Setup
-You will need to create a new class that extends WP_AJAX. This class must have one protected property called $action and one protected method named run(). $action will be the AJAX action name [See wp_ajax_(action)](https://codex.wordpress.org/Plugin_API/Action_Reference/wp_ajax_(action)).
+Require WP_Route with composer
+
+```
+$ composer require anthonybudd/WP_Route
+```
+
+**Or**
+
+Download the WP_Route class and require it at the top of your functions.php file. This is not recommended. 
+
 ```php
-Class Example extends WP_AJAX
-{
-    protected $action = 'example';
+require 'WP_Route/src/WP_Route.php';
+```
 
-    protected function run(){
-        echo "Success!";
-    }
+
+# GET Started
+Simply define a route by calling any of the static methods get(), post(), put(), patch(), delete() or any(). This will bind the specified URL to a callable. When a HTTP request bound for that URL is detected, WP_Route will call the callable. 
+
+```php
+WP_Route::get('flights', 'listFlights');
+
+// http://example.com/flights
+function listFlights(){
+  
+   // Your Code Here!  
+  
 }
 ```
 
-***
+# Parameters
+If you need to extract route parameters from the request URI you can do this by wrapping the value to be extracted in curly brackets. The extracted values will be provided to the callable as function arguments as shown below.
 
-### Listen
-Next you have to call the static method listen(). This will create all of the hooks so WordPress knows to call the run() method when the correct AJAX endpoint is hit. Note: You will need to call the listen() method for each of your AJAX actions.
+# Methods
+## get($route, $callable)
+any(), post(), put(), patch(), delete()
+All of these methods are used for binding a specific route and HTTP request method to a callable. The method any() will bind a route to a callable but will be HTTP method agnostic.
 ```php
-ExampleAJAX::listen();
-```
 
-If you would like to only allow signed in users to access your AJAX endpoint add the argument FALSE to the listen method.
-```php
-ExampleAJAX::listen(FALSE);
-```
+WP_Route::get('flights',           'listFlights');
+WP_Route::post('flights/{flight}', array('FlightController', 'singleFlight'));
 
-***
-
-### JSON Response
-If you want to respond to an AJAX request with data the JSONResponse() method will automatically set the content type header to ‘application/json’ and JSON encode the data provided to the method.
-
-I am aware that WordPress has a function called [wp_send_json()](https://codex.wordpress.org/Function_Reference/wp_send_json) but, due to the fact that I know how much it annoys WP developers that I have included this method, I will not be removing it.
-
-```php
-Class ExampleAJAX extends WP_AJAX{
-    ..
-
-    protected function run(){
-        $post5 = get_post(5);
-
-        $this->JSONResponse($post5);
-    }
+function listFlights(){
+	// Your Code Here
 }
-
-```
-
-***
-
-### Helper Methods
-
-```php
-Example::url() // Returns the url of the ajax endpoint. Example http://ajax.local/wp/wp-admin/admin-ajax.php?action=example
-
-$this->isLoggedIn(); // Returns TRUE or FALSE if the current visitor is a logged in user.
-
-$this->has($key); // has() will return TRUE or FALSE if an element exists in the $_REQUEST array with a key of $key
-
-$this->get($key, [ $default = NULL ]); // The get() method will return the specified HTTP request variable. If the variable does not exist it will return NULL by default. If you would like to set a custom string as the default, provide it as the second argument.
-
-$this->requestType(); // Returns 'PUT', 'POST', 'GET', 'DELETE' depending on HTTP request type
-
-$this->requestType('POST'); // Returns (bool) 
-
-$this->requestType(['POST', 'PUT']); // Returns (bool)  
-```
-
-***
-
-### Example
-```php
-Class CreatePost extends WP_AJAX
-{
-    protected $action = 'create_post';
-
-    protected function run(){
-        if($this->isLoggedIn()){
-            $post = [
-                'post_status' => 'publish'
-            ];
-            
-            if( $this->requestType(['POST', 'put']) ){
-                $post['post_content'] = 'This request was either POST or PUT';
-            }else if( $this->requestType('get') ){
-                $post['post_content'] = 'This request was GET';
-            }
-
-            $post['post_title'] = sprintf('This post was created by %s', $this->user->data->user_nicename);
-            
-            wp_insert_post($post);
-
-            $this->JSONResponse($post);
-        }
-    }
+  
+Class FlightController{
+	public static function singleFlight($flight){
+		// Your Code Here
+	}
 }
-
-CreatePost::listen();
-
-// http://example.com/wp-admin/admin-ajax.php?action=create_post
-
 ```
+
+## match($methods, $route, $callable)
+If you want to bind a callable to multiple HTTP methods but you do not want to use any(), you can use match(). The first parameter must be an array of HTTP request methods. The arguments $route and $callable work the same as get().
+```php
+WP_Route::match(['get', 'post'], 'flights/{flight}/confirm', 'confirmFlight');
+
+function confirmFlight($flight){
+	// Your Code Here
+}
+```
+
+## redirect($route, $redirect, $code = 301)
+The redirect() method will redirect the user to the argument $redirect when they navigate to the route. To set a custom HTTP response code use the 3rd argument $code.
+```php
+WP_Route::redirect('open-google', 'https://google.com', 301);
+```
+
+
