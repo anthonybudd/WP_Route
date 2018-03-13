@@ -55,10 +55,17 @@ function listFlights(){
 
 # Parameters
 If you need to extract route parameters from the request URI you can do this by wrapping the value to be extracted in curly brackets. The extracted values will be provided to the callable as function arguments as shown below.
+```php
+WP_Route::get('flights/{flight}', 'singleFlight');
+
+function singleFlight($flight){
+    echo $flight; // 1
+}
+```
 
 # Methods
-## get($route, $callable)
-any(), post(), put(), patch(), delete()
+### get($route, $callable)
+### any(), post(), put(), patch(), delete()
 All of these methods are used for binding a specific route and HTTP request method to a callable. The method any() will bind a route to a callable but will be HTTP method agnostic.
 ```php
 
@@ -76,7 +83,7 @@ Class FlightController{
 }
 ```
 
-## match($methods, $route, $callable)
+### match($methods, $route, $callable)
 If you want to bind a callable to multiple HTTP methods but you do not want to use any(), you can use match(). The first parameter must be an array of HTTP request methods. The arguments $route and $callable work the same as get().
 ```php
 WP_Route::match(['get', 'post'], 'flights/{flight}/confirm', 'confirmFlight');
@@ -86,7 +93,7 @@ function confirmFlight($flight){
 }
 ```
 
-## redirect($route, $redirect, $code = 301)
+### redirect($route, $redirect, $code = 301)
 The redirect() method will redirect the user to the argument $redirect when they navigate to the route. To set a custom HTTP response code use the 3rd argument $code.
 ```php
 WP_Route::redirect('open-google', 'https://google.com', 301);
