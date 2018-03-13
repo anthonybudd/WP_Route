@@ -3,7 +3,7 @@
 <p align="center"><img src="https://ideea.co.uk/static/wp_route.png"></p>
 
 ### A simple way to make custom routes in WordPress.
-WP_Route is a simple way to create custom routes in WordPress for listen for webhooks, oAuth callback and basic routes. WP_Route is a single class solution that does not require any set-up and supports route parameters and redirects.
+WP_Route is a simple way to create custom routes in WordPress for listening for webhooks, oAuth callbacks and basic routing. WP_Route is a single class solution that does not require any set-up and supports route parameters and redirects.
 
 ## Introduction: **[Medium Post](https://medium.com/@AnthonyBudd/wp-route-a-simple-way-to-make-custom-routes-in-wordpress-5ab1b3063115)**
 
