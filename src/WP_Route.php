@@ -129,7 +129,25 @@ final class WP_Route{
     	}
     	
     	return $return;
-    }
+	}
+	
+	private function matchRouteToRequest($route, $request) {
+		$routes = $this->tokenize($route);
+		$requests = $this->tokenize($request);
+	  
+		$diff = array_diff($routes, $requests);
+		
+		$matched = true;
+	  
+		if( !empty($diff) ) {
+		  foreach($diff as $k => $param) {
+			if( preg_match('/\{\s*.+?\s*\}/', $param) && !empty($requests[$k]) ) continue;
+			$matched = false;
+		  }
+		}
+	  
+		return $matched;
+	}
 
 
     // -----------------------------------------------------
@@ -162,7 +180,13 @@ final class WP_Route{
     		if(count($this->tokenize($route->route)) !== count($tokenizedRequestURI)){
     			unset($routes[$key]);
     			continue;
-    		}
+			}
+			
+			// Filter routes that do not match the request
+			if( ! $this->matchRouteToRequest($route->route, $requestURI) ) {
+				unset($routes[$key]);
+				continue;
+			}
 
     		// Add more filtering here as routing gets more complex.
     	}
