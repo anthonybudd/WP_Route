@@ -159,7 +159,8 @@ final class WP_Route{
     }
 
     public function tokenize($url){
-    	return array_filter(explode('/', ltrim($url, '/')));
+		extract( parse_url($url) );
+    	return array_filter(explode('/', ltrim($path, '/')));
     }
 
     public function requestURI(){
