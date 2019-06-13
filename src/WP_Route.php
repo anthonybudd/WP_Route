@@ -165,10 +165,10 @@ final class WP_Route{
     			continue;
     		}
     		
-    		foreach ($tokenizedRoute as $i => $segment) {
-	    		if (!preg_match('/^\{.*}$/', $segment) && $segment !== $tokenizedRequestURI[$i]) {
-					unset($routes[$key]);
-					continue 2;
+    		foreach($tokenizedRoute as $i => $segment){
+	    		if(!preg_match('/^\{.*\}$/', $segment) && $segment !== $tokenizedRequestURI[$i]){
+				unset($routes[$key]);
+				continue 2;
 	    		}
     		}
 
