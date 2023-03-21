@@ -159,9 +159,17 @@ final class WP_Route{
 
     	foreach($routes as $key => $route){
     		// First, filter routes that do not have equal tokenized lengths
-    		if(count($this->tokenize($route->route)) !== count($tokenizedRequestURI)){
+    		$tokenizedRoute = $this->tokenize($route->route);
+    		if(count($tokenizedRoute) !== count($tokenizedRequestURI)){
     			unset($routes[$key]);
     			continue;
+    		}
+    		
+    		foreach($tokenizedRoute as $i => $segment){
+	    		if(!preg_match('/^\{.*\}$/', $segment) && $segment !== $tokenizedRequestURI[$i]){
+				unset($routes[$key]);
+				continue 2;
+	    		}
     		}
 
     		// Add more filtering here as routing gets more complex.
