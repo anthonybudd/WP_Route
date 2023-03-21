@@ -151,45 +151,68 @@ final class WP_Route{
     // -----------------------------------------------------
 	// handle()
 	// -----------------------------------------------------
-    public function handle(){
+        public function handle(){
         $method              = strtoupper($_SERVER['REQUEST_METHOD']);
         $routes              = array_merge($this->routes[$method], $this->routes['ANY']);  
-    	$requestURI 		 = $this->requestURI();
+        // only take path, ignore query string. remove slash from front and back. 
+        // segments are created by splitting on slash
+        // example: /this/should/work/ => Array ( [0] => this [1] => should [2] => work )
+        // or example: /this/{anything}/work/ => Array ( [0] => this [1] => {anything} [2] => work ), with variable allowed
+
+    	$requestURI 		 = trim(parse_url($this->requestURI(), PHP_URL_PATH), '/');
     	$tokenizedRequestURI = $this->tokenize($requestURI);
 
+		// First, filter routes that do not have equal tokenized lengths
     	foreach($routes as $key => $route){
-    		// First, filter routes that do not have equal tokenized lengths
     		if(count($this->tokenize($route->route)) !== count($tokenizedRequestURI)){
     			unset($routes[$key]);
     			continue;
-    		}
-
-    		// Add more filtering here as routing gets more complex.
+    		}    		
     	}
 
-    	$routes = array_values($routes);
-    	if(isset($routes[0])){
-    		$route = $routes[0];
-
-			if(is_string($route->callable) &&
-			   class_exists($route->callable) &&
-			   is_subclass_of($route->callable, 'WP_AJAX')){
-
-				$callable   = $route->callable;
-				$controller = new $callable;
-				call_user_func_array(array($controller, 'boot'), $this->getRouteParams($route->route));
-
-			}elseif(isset($routes[0]->redirect)){
-
-				$redirect = $routes[0]->redirect;
-				header("Location: {$redirect}", TRUE, $routes[0]->code);
-				die;
-
-			}else{
-
-				call_user_func_array($route->callable, $this->getRouteParams($route->route));
-
-			}
+    	// add the tokenized route value
+    	foreach($routes as $key => $route) {
+    		$route->tokenized = $this->tokenize($route->route);
     	}
+
+    	// assume no match
+    	$match = false;
+
+    	foreach($routes as $key => $route) {
+	    	$match = array_reduce($tokenizedRequestURI, function($carry, $item) use($route) {
+	    		static $i = -1;
+	    		$i++;
+	    		$route_token = $route->tokenized[$i];
+
+	    		// if any match fails, carry will be false
+	    		if ($carry === false) {
+	    			return false;
+	    		}
+
+	    		// exact match returns the route as carry
+	    		if ($item === $route_token) {
+	    			return $route;
+	    		}
+
+    			// if this is a variable, let it pass through also
+    			if (preg_match('/\{(.+)\}/', $route_token) === 1) {
+    				return $route;
+    			}
+
+	    		// no match, no variable, returns false		
+		    	return false;
+	    	}, null);
+
+	    	// on first match, exit
+	    	if (is_object($match)) {
+	    		break;
+	    	}
+	    }
+
+	    // if a match was found, call it, and stop searching
+	   	if (is_object($match) && is_callable($match->callable)) {
+	   		return call_user_func_array($route->callable, $this->getRouteParams($route->route));
+	   	}
+
     }
 }
